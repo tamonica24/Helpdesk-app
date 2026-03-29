@@ -24,40 +24,30 @@
                             {{ session('success') }}
                         </div>
                     @endif
-
-                    <div class="table-responsive">
-                        <table class="table table-hover nowrap w-100">
-                            <thead>
-                                <tr>
-                                    <th>No.</th>
-                                    <th>Kode OPD</th>
-                                    <th>Nama</th>
-                                    <th>Status</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($data as $item)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $item->kode_opd }}</td>
-                                        <td>{{ $item->nama_opd }}</td>
-                                        <td>{{ $item->is_active }}</td>
-                                        <td>
-                                            <div class="btn-group">
-                                                <a href="" class="btn btn-warning">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <button type="button" class="btn-danger">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                    <x-adminlte-datatable id="opd-table" :heads="['NO.', 'Kode', 'Nama', 'Status', 'Aksi']" :config="['paging' => true]">
+                        @foreach ($data as $opd)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $opd->kode_opd }}</td>
+                                <td>{{ $opd->nama_opd }}</td>
+                                <td>{{ $opd->is_active }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{{ route('opd.edit', $opd->id) }}" class="btn btn-warning">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form action="{{ route('opd.destroy', $opd->id) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')"
+                                                class="btn-danger"><i class="fa fa-trash"></i></button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </x-adminlte-datatable>
                 </div>
             </div>
         </div>
@@ -71,6 +61,8 @@
     @endpush
 
     {{-- Push extra scripts --}}
+
+    @section('plugins.Datatables', true)
 
     @push('js')
         <script>
